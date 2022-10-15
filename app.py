@@ -13,7 +13,7 @@ da = da.drop('ID', axis=1)
 useless_cols = ['Junctionmean_vehicles', 'Vehicles', 'Seconds', 'Junctionmedian_vehicles',
                 'day_of_weekmedian_vehicles', 'day_of_weekmin_vehicles', 'Year', 'Junctionmin_vehicles']
 
-pickle_in = open('Traffic_App/traffic_predictor.pkl', 'rb')
+pickle_in = open('traffic_predictor.pkl', 'rb')
 lgb = pickle.load(pickle_in)
 
 
