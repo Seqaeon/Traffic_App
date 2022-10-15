@@ -7,7 +7,7 @@ import pickle
 from math import floor, ceil
 from tqdm import tqdm
 import gc
-from pathlib import Path
+#from pathlib import Path
 
 da = pd.read_csv('traffic_data_processed.csv')
 da = da.drop('ID', axis=1)
@@ -15,9 +15,10 @@ useless_cols = ['Junctionmean_vehicles', 'Vehicles', 'Seconds', 'Junctionmedian_
                 'day_of_weekmedian_vehicles', 'day_of_weekmin_vehicles', 'Year', 'Junctionmin_vehicles']
 
 
-pkl_path = Path(__file__).parents[1] / 'traffic_predictor.pkl'
-pickle_in = open(pkl_path, 'rb')
+#pkl_path = Path(__file__).parents[1] / 'traffic_predictor.pkl'
+pickle_in = open('traffic_predictor.pkl', 'rb')
 lgb = pickle.load(pickle_in)
+pickle_in.close()
 
 
 # @app.route('/')
