@@ -15,7 +15,7 @@ useless_cols = ['Junctionmean_vehicles', 'Vehicles', 'Seconds', 'Junctionmedian_
                 'day_of_weekmedian_vehicles', 'day_of_weekmin_vehicles', 'Year', 'Junctionmin_vehicles']
 
 
-pkl_path = Path(__file__).parents[1] / 'Traffic_App/traffic_predictor.pkl'
+pkl_path = Path(__file__).parents[1] / 'traffic_predictor.pkl'
 pickle_in = open(pkl_path, 'rb')
 lgb = pickle.load(pickle_in)
 
