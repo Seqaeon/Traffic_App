@@ -7,21 +7,40 @@ import pickle
 from math import floor, ceil
 from tqdm import tqdm
 import gc
-#from pathlib import Path
+
 
 da = pd.read_csv('traffic_data_processed.csv')
 da = da.drop('ID', axis=1)
-useless_cols = ['Junctionmean_vehicles', 'Vehicles', 'Seconds', 'Junctionmedian_vehicles',
-                'day_of_weekmedian_vehicles', 'day_of_weekmin_vehicles', 'Year', 'Junctionmin_vehicles']
+useless_cols1 = ['day_of_weekmin_vehicles', 'day_of_weekstd_vehicles',
+                 'Vehicles', 'Seconds', 'Junction',
+                 'day_of_weekmedian_vehicles', 'Year']
+useless_cols2 = ['day_of_weekmin_vehicles',
+                 'Vehicles', 'Seconds', 'Junction', ]
+useless_cols3 = ['day_of_weekmin_vehicles',
+                 'Vehicles', 'Seconds', 'Junction']
+useless_cols4 = ['day_of_weekstd_vehicles', 'day_of_weekmin_vehicles',
+                 'Vehicles', 'Seconds', 'Junction',
+                 'Year', 'day_of_weekmedian_vehicles']
 
+pickle_in = open("junction1_model.pkl", "rb")
+junc1 = pickle.load(pickle_in)
+pickle_in.close()
 
-#pkl_path = Path(__file__).parents[1] / 'traffic_predictor.pkl'
-pickle_in = open('traffic_predictor.pkl', 'rb')
-lgb = pickle.load(pickle_in)
-#pickle_in.close()
+pickle_in = open("junction2_model.pkl", "rb")
+junc2 = pickle.load(pickle_in)
+pickle_in.close()
 
+pickle_in = open("junction3_model.pkl", "rb")
+junc3 = pickle.load(pickle_in)
+pickle_in.close()
+
+pickle_in = open("junction4_model.pkl", "rb")
+junc4 = pickle.load(pickle_in)
+pickle_in.close()
 
 # @app.route('/')
+
+
 def welcome():
     return "Welcome All"
 
@@ -53,7 +72,7 @@ def predict_traffic(junction, DateTime):
     db = pd.concat([da, df], axis=0)
 
     def agg_functions(df1):
-        features = ['Junction', 'Month', 'day_of_month',
+        features = ['Month', 'day_of_month',
                     'day_of_week', 'Date', 'Time', 'day_of_year']
         for x in tqdm(features):
             t = df1.groupby(x)['Vehicles'].agg(
@@ -68,8 +87,20 @@ def predict_traffic(junction, DateTime):
         return df1
     df = agg_functions(db)
     df = df.tail(1)
-    df = df.drop(useless_cols, axis=1).reset_index(drop=True)
-    prediction = ceil(float(lgb.predict(df)))
+    #df = df.drop(useless_cols, axis=1).reset_index(drop=True)
+
+    if junction == 1:
+        df = df.drop(useless_cols1, axis=1).reset_index(drop=True)
+        prediction = ceil(float(junc1.predict(df)))
+    elif junction == 2:
+        df = df.drop(useless_cols2, axis=1).reset_index(drop=True)
+        prediction = ceil(float(junc2.predict(df)))
+    elif junction == 3:
+        df = df.drop(useless_cols3, axis=1).reset_index(drop=True)
+        prediction = ceil(float(junc3.predict(df)))
+    elif junction == 4:
+        df = df.drop(useless_cols4, axis=1).reset_index(drop=True)
+        prediction = ceil(float(junc4.predict(df)))
 
     return prediction
 
@@ -101,7 +132,7 @@ def main():
         result = prediction
     st.success('Successful!!!')
     st.write('The Traffic Prediction for Junction', junction, ' at Date:',
-             date, 'and Time:', time, 'is: ', prediction, '\u00B1 2 Vehicles')
+             date, 'and Time:', time, 'is: ', prediction, '\u00B1 3 Vehicles')
     if st.button("About"):
         st.text("Team Scipy")
         st.text("Hamoye Premiere Project")
