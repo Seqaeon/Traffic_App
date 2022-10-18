@@ -4,6 +4,8 @@ import numpy as np
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 import pickle
+import matplotlib.pyplot as plt
+import seaborn as sns
 from math import floor, ceil
 from tqdm import tqdm
 import gc
@@ -11,16 +13,14 @@ import gc
 
 da = pd.read_csv('traffic_data_processed.csv')
 da = da.drop('ID', axis=1)
-useless_cols1 = ['day_of_weekmin_vehicles', 'day_of_weekstd_vehicles',
-                 'Vehicles', 'Seconds', 'Junction',
-                 'day_of_weekmedian_vehicles', 'Year']
-useless_cols2 = ['day_of_weekmin_vehicles',
-                 'Vehicles', 'Seconds', 'Junction', ]
-useless_cols3 = ['day_of_weekmin_vehicles',
+useless_cols1 = ['Quartermedian_vehicles', 'day_of_weekmin_vehicles', 'Quartermax_vehicles', 'Quarter', 'Quartermin_vehicles', 'day_of_weekmedian_vehicles',
                  'Vehicles', 'Seconds', 'Junction']
-useless_cols4 = ['day_of_weekstd_vehicles', 'day_of_weekmin_vehicles',
-                 'Vehicles', 'Seconds', 'Junction',
-                 'Year', 'day_of_weekmedian_vehicles']
+useless_cols2 = ['Year', 'Quartermax_vehicles', 'Quartermedian_vehicles', 'day_of_weekmedian_vehicles', 'day_of_weekmin_vehicles', 'Quartermin_vehicles', 'Quarter',
+                 'Vehicles', 'Seconds', 'Junction']
+useless_cols3 = ['Quartermax_vehicles', 'Quarter', 'Monthmax_vehicles', 'Monthmin_vehicles', 'Timemedian_vehicles', 'Quarterstd_vehicles', 'Timemin_vehicles', 'Year', 'Quartermedian_vehicles', 'day_of_weekmedian_vehicles', 'day_of_weekmean_vehicles', 'day_of_weekmin_vehicles', 'day_of_weekmax_vehicles', 'Quartermean_vehicles', 'day_of_monthmin_vehicles', 'Quartermin_vehicles',
+                 'Vehicles', 'Seconds', 'Junction']
+useless_cols4 = ['Quarter', 'day_of_weekmin_vehicles', 'Monthmin_vehicles', 'day_of_weekmedian_vehicles', 'Year', 'Quartermedian_vehicles', 'Quartermean_vehicles', 'Quartermin_vehicles', 'Quartermax_vehicles', 'day_of_year', 'Quarterstd_vehicles', 'Month', 'Monthmean_vehicles',
+                 'Vehicles', 'Seconds', 'Junction']
 
 pickle_in = open("junction1_model.pkl", "rb")
 junc1 = pickle.load(pickle_in)
@@ -51,7 +51,12 @@ def predict_traffic(junction, DateTime):
 
     df = pd.DataFrame(columns=['DateTime', 'Junction', 'Year', 'Month',
                       'day_of_month', 'day_of_week', 'Date', 'Time', 'day_of_year'])
-    df.loc[0] = 0
+
+    if isinstance(DateTime, str):
+        df.loc[0] = 0
+    else:
+        b = len(DateTime)
+        df.iloc[:b] = 0
     df['DateTime'] = pd.to_datetime(DateTime)
 
     df['Year'] = df['DateTime'].dt.year
@@ -66,14 +71,18 @@ def predict_traffic(junction, DateTime):
     df['Seconds'] = pd.to_timedelta(df['DateTime'].dt.strftime(
         '%H:%M:%S')).dt.total_seconds().astype(int)
     df['DateTime'] = df['DateTime'].values.astype(np.int64) / 10 ** 9
-    L_encoder = LabelEncoder()
+
+    pkl_file = open('L_encoder.pkl', 'rb')
+    L_encoder = pickle.load(pkl_file)
+    pkl_file.close()
     df['Date'] = L_encoder.fit_transform(df['Date'])
+    a = len(df)
 
     db = pd.concat([da, df], axis=0)
 
     def agg_functions(df1):
-        features = ['Month', 'day_of_month',
-                    'day_of_week', 'Date', 'Time', 'day_of_year']
+        features = ['Month', 'Quarter', 'day_of_month',
+                    'day_of_week', 'Time', 'day_of_year']
         for x in tqdm(features):
             t = df1.groupby(x)['Vehicles'].agg(
                 ['std', 'max', 'min', 'mean', 'median'])
@@ -86,23 +95,62 @@ def predict_traffic(junction, DateTime):
             gc.collect()
         return df1
     df = agg_functions(db)
-    df = df.tail(1)
+    df = df.tail(a)
     #df = df.drop(useless_cols, axis=1).reset_index(drop=True)
+
+    def to_ceil(array):
+        ceiled = []
+        for i in range(len(array)):
+            d = ceil(array[i])
+            ceiled.append(d)
+        return ceiled
 
     if junction == 1:
         df = df.drop(useless_cols1, axis=1).reset_index(drop=True)
-        prediction = ceil(float(junc1.predict(df)))
+        prediction = junc1.predict(df)
+        prediction = to_ceil(prediction)
+        if isinstance(DateTime, str):
+            predictions = prediction
+            for i in predictions:
+                predictions = i
+        else:
+            predictions = pd.DataFrame(columns=['Vehicle Number Predictions'])
+            predictions['Vehicle Number Predictions'] = prediction
     elif junction == 2:
         df = df.drop(useless_cols2, axis=1).reset_index(drop=True)
-        prediction = ceil(float(junc2.predict(df)))
+        prediction = junc2.predict(df)
+        prediction = to_ceil(prediction)
+        if isinstance(DateTime, str):
+            predictions = prediction
+            for i in predictions:
+                predictions = i
+        else:
+            predictions = pd.DataFrame(columns=['Vehicle Number Predictions'])
+            predictions['Vehicle Number Predictions'] = prediction
     elif junction == 3:
         df = df.drop(useless_cols3, axis=1).reset_index(drop=True)
-        prediction = ceil(float(junc3.predict(df)))
+        prediction = junc3.predict(df)
+        prediction = to_ceil(prediction)
+        if isinstance(DateTime, str):
+            predictions = prediction
+            for i in predictions:
+                predictions = i
+        else:
+            predictions = pd.DataFrame(columns=['Vehicle Number Predictions'])
+            predictions['Vehicle Number Predictions'] = prediction
     elif junction == 4:
         df = df.drop(useless_cols4, axis=1).reset_index(drop=True)
-        prediction = ceil(float(junc4.predict(df)))
+        prediction = junc4.predict(df)
+        prediction = to_ceil(prediction)
+        if isinstance(DateTime, str):
+            predictions = prediction
+            for i in predictions:
+                predictions = i
+        else:
+            predictions = pd.DataFrame(columns=['Vehicle Number Predictions'])
+            predictions['Vehicle Number Predictions'] = prediction
 
-    return prediction
+    return predictions
 
 
 def main():
@@ -133,7 +181,54 @@ def main():
     st.success('Successful!!!')
     st.write('The Traffic Prediction for Junction', junction, ' at Date:',
              date, 'and Time:', time, 'is: ', prediction, '\u00B1 3 Vehicles')
-    if st.button("About"):
+    st.write('OR')
+
+    with st.expander("Upload CSV with DateTime Column"):
+        st.write("IMPORT DATA")
+        st.write(
+            "Import the time series CSV file. It should have one column labelled as 'DateTime'"
+        )
+        data = st.file_uploader("Upload here", type="csv")
+        st.session_state.counter = 0
+        if data is not None:
+            dataset = pd.read_csv(data)
+            dataset["DateTime"] = pd.to_datetime(dataset["DateTime"])
+            dataset = dataset.sort_values("DateTime")
+
+            junction = st.number_input(
+                "Which Junction:", min_value=1, max_value=4, value=1, step=1, format="%d", key='hdth2573@%#dgjsj@'
+            )
+
+            results = predict_traffic(junction, dataset["DateTime"])
+            st.write("Upload Sucessful")
+            st.session_state.counter += 1
+            if st.button("Predict Dataset"):
+                result = results
+                result = pd.concat([dataset, result], axis=1)
+                st.success("Successful!!!")
+                st.write("Predicting for Junction", junction)
+                st.write(result)
+
+                def convert_df(df):
+                    # IMPORTANT: Cache the conversion to prevent computation on every rerun
+                    return df.to_csv(index=False).encode("utf-8")
+
+                csv = convert_df(result)
+
+                st.download_button(
+                    label="Download Traffic Predictions as CSV",
+                    data=csv,
+                    file_name="Traffic Predictions.csv",
+                    mime="text/csv",
+                )
+                fig = plt.figure(figsize=(12, 10))
+                sns.lineplot(
+                    x='DateTime', y='Vehicle Number Predictions', data=result)
+
+                st.write("The following plot shows predicted Vehicle numbers at Junction",
+                         junction, "for your provide Datetime Frame:")
+                st.pyplot(fig)
+                st.session_state.counter += 1
         st.text("Team Scipy")
         st.text("Hamoye Premiere Project")
         st.text("Built with Streamlit")
