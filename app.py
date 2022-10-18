@@ -270,9 +270,9 @@ def main():
         x='DateTime', y='Vehicle Number Predictions', data=forecast)
     st.pyplot(fig)
 
-        st.text("Team Scipy")
-        st.text("Hamoye Premiere Project")
-        st.text("Built with Streamlit")
+    st.text("Team Scipy")
+    st.text("Hamoye Premiere Project")
+    st.text("Built with Streamlit")
 
 
 if __name__ == '__main__':
