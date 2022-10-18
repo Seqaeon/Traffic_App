@@ -207,14 +207,15 @@ def main():
                 result = pd.concat([dataset, result], axis=1)
                 st.success("Successful!!!")
                 st.write("Predicting for Junction", junction)
-                st.write(result)
+                resulta = result.copy()
+                resulta['DateTime'] = resulta['DateTime'].astype(str)
+                st.write(resulta)
 
                 def convert_df(df):
                     # IMPORTANT: Cache the conversion to prevent computation on every rerun
                     return df.to_csv(index=False).encode("utf-8")
 
                 csv = convert_df(result)
-
                 st.download_button(
                     label="Download Traffic Predictions as CSV",
                     data=csv,
@@ -229,6 +230,46 @@ def main():
                          junction, "for your provide Datetime Frame:")
                 st.pyplot(fig)
                 st.session_state.counter += 1
+
+        forecast_junc = pd.date_range(
+            start='2017-07-01', end=datetime.datetime.today().strftime("%Y-%m-%d %H"), freq='H')
+        forecast_junc = pd.DataFrame({'DateTime': forecast_junc})
+        st.write('Real Time Forecast for Junction 1 since July 1st 2020')
+        junction = 1
+        forecast = predict_traffic(junction, forecast_junc['DateTime'])
+        forecast = pd.concat([forecast_junc, forecast], axis=1)
+        fig = plt.figure(figsize=(20, 10))
+        sns.lineplot(
+            x='DateTime', y='Vehicle Number Predictions', data=forecast)
+        st.pyplot(fig)
+
+        st.write('Real Time Forecast for Junction 2 since July 1st 2020')
+        junction = 2
+        forecast = predict_traffic(junction, forecast_junc['DateTime'])
+        forecast = pd.concat([forecast_junc, forecast], axis=1)
+        fig = plt.figure(figsize=(20, 10))
+        sns.lineplot(
+            x='DateTime', y='Vehicle Number Predictions', data=forecast)
+        st.pyplot(fig)
+
+        st.write('Real Time Forecast for Junction 3 since July 1st 2020')
+        junction = 3
+        forecast = predict_traffic(junction, forecast_junc['DateTime'])
+        forecast = pd.concat([forecast_junc, forecast], axis=1)
+        fig = plt.figure(figsize=(20, 10))
+        sns.lineplot(
+            x='DateTime', y='Vehicle Number Predictions', data=forecast)
+        st.pyplot(fig)
+
+        st.write('Real Time Forecast for Junction 4 since July 1st 2020')
+        junction = 4
+        forecast = predict_traffic(junction, forecast_junc['DateTime'])
+        forecast = pd.concat([forecast_junc, forecast], axis=1)
+        fig = plt.figure(figsize=(20, 10))
+        sns.lineplot(
+            x='DateTime', y='Vehicle Number Predictions', data=forecast)
+        st.pyplot(fig)
+
         st.text("Team Scipy")
         st.text("Hamoye Premiere Project")
         st.text("Built with Streamlit")
