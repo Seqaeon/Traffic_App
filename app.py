@@ -231,44 +231,44 @@ def main():
                 st.pyplot(fig)
                 st.session_state.counter += 1
 
-        forecast_junc = pd.date_range(
-            start='2017-07-01', end=datetime.datetime.today().strftime("%Y-%m-%d %H"), freq='H')
-        forecast_junc = pd.DataFrame({'DateTime': forecast_junc})
-        st.write('Real Time Forecast for Junction 1 since July 1st 2020')
-        junction = 1
-        forecast = predict_traffic(junction, forecast_junc['DateTime'])
-        forecast = pd.concat([forecast_junc, forecast], axis=1)
-        fig = plt.figure(figsize=(20, 10))
-        sns.lineplot(
-            x='DateTime', y='Vehicle Number Predictions', data=forecast)
-        st.pyplot(fig)
+    forecast_junc = pd.date_range(
+        start='2017-07-01', end=datetime.datetime.today().strftime("%Y-%m-%d %H"), freq='H')
+    forecast_junc = pd.DataFrame({'DateTime': forecast_junc})
+    st.write('Real Time Forecast for Junction 1 since July 1st 2020')
+    junction = 1
+    forecast = predict_traffic(junction, forecast_junc['DateTime'])
+    forecast = pd.concat([forecast_junc, forecast], axis=1)
+    fig = plt.figure(figsize=(20, 10))
+    sns.lineplot(
+        x='DateTime', y='Vehicle Number Predictions', data=forecast)
+    st.pyplot(fig)
 
-        st.write('Real Time Forecast for Junction 2 since July 1st 2020')
-        junction = 2
-        forecast = predict_traffic(junction, forecast_junc['DateTime'])
-        forecast = pd.concat([forecast_junc, forecast], axis=1)
-        fig = plt.figure(figsize=(20, 10))
-        sns.lineplot(
-            x='DateTime', y='Vehicle Number Predictions', data=forecast)
-        st.pyplot(fig)
+    st.write('Real Time Forecast for Junction 2 since July 1st 2020')
+    junction = 2
+    forecast = predict_traffic(junction, forecast_junc['DateTime'])
+    forecast = pd.concat([forecast_junc, forecast], axis=1)
+    fig = plt.figure(figsize=(20, 10))
+    sns.lineplot(
+        x='DateTime', y='Vehicle Number Predictions', data=forecast)
+    st.pyplot(fig)
 
-        st.write('Real Time Forecast for Junction 3 since July 1st 2020')
-        junction = 3
-        forecast = predict_traffic(junction, forecast_junc['DateTime'])
-        forecast = pd.concat([forecast_junc, forecast], axis=1)
-        fig = plt.figure(figsize=(20, 10))
-        sns.lineplot(
-            x='DateTime', y='Vehicle Number Predictions', data=forecast)
-        st.pyplot(fig)
+    st.write('Real Time Forecast for Junction 3 since July 1st 2020')
+    junction = 3
+    forecast = predict_traffic(junction, forecast_junc['DateTime'])
+    forecast = pd.concat([forecast_junc, forecast], axis=1)
+    fig = plt.figure(figsize=(20, 10))
+    sns.lineplot(
+        x='DateTime', y='Vehicle Number Predictions', data=forecast)
+    st.pyplot(fig)
 
-        st.write('Real Time Forecast for Junction 4 since July 1st 2020')
-        junction = 4
-        forecast = predict_traffic(junction, forecast_junc['DateTime'])
-        forecast = pd.concat([forecast_junc, forecast], axis=1)
-        fig = plt.figure(figsize=(20, 10))
-        sns.lineplot(
-            x='DateTime', y='Vehicle Number Predictions', data=forecast)
-        st.pyplot(fig)
+    st.write('Real Time Forecast for Junction 4 since July 1st 2020')
+    junction = 4
+    forecast = predict_traffic(junction, forecast_junc['DateTime'])
+    forecast = pd.concat([forecast_junc, forecast], axis=1)
+    fig = plt.figure(figsize=(20, 10))
+    sns.lineplot(
+        x='DateTime', y='Vehicle Number Predictions', data=forecast)
+    st.pyplot(fig)
 
         st.text("Team Scipy")
         st.text("Hamoye Premiere Project")
@@ -276,4 +276,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main() 
+    main()
