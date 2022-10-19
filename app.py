@@ -171,7 +171,7 @@ def main():
     DateTime = datestr + ' ' + timestr
     DateTime1 = pd.to_datetime(DateTime)
     junction = st.number_input(
-        'Which Junction:', min_value=1, max_value=4, value=1, step=1, format='%d')
+        'Choose Junction:', min_value=1, max_value=4, value=1, step=1, format='%d')
 
     prediction = predict_traffic(junction, DateTime)
 
@@ -231,7 +231,7 @@ def main():
                 st.pyplot(fig)
                 st.session_state.counter += 1
 
-    with st.expander("Real Time Forecasts"):
+    with st.expander("Real Time Forecasts with Datetime Range"):
         st.write('From:')
         date1 = st.date_input(
             'Date', datetime.date(2017, 7, 1), key='hst%N@&n8&dn2')  # (2011, 1, 28))
@@ -249,11 +249,12 @@ def main():
         timestr = time2.strftime("%H:%M:%S")
         DateTime1 = datestr + ' ' + timestr
         #DateTime1 = pd.to_datetime(DateTime)
-        junction = st.number_input(
-            'Which Junction:', min_value=1, max_value=4, value=1, step=1, format='%d', key='ksu2@uNnyw1*2')
-        forecast_junc = pd.date_range(
-            start=DateTime, end=DateTime1, freq='H')
-        forecast_junc = pd.DataFrame({'DateTime': forecast_junc})
+    st.write('Real Time Forecasts')
+    junction = st.number_input(
+        'Choose Junction:', min_value=1, max_value=4, value=1, step=1, format='%d', key='ksu2@uNnyw1*2')
+    forecast_junc = pd.date_range(
+        start=DateTime, end=DateTime1, freq='H')
+    forecast_junc = pd.DataFrame({'DateTime': forecast_junc})
     # if st.button('Forecast'):
 
     st.write('Real Time Forecast for Junction',
