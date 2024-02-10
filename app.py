@@ -9,6 +9,9 @@ import seaborn as sns
 from math import floor, ceil
 from tqdm import tqdm
 import gc
+import warnings
+warnings.filterwarnings("ignore")
+
 
 
 da = pd.read_csv('traffic_data_processed.csv')
@@ -22,21 +25,18 @@ useless_cols3 = ['Quartermax_vehicles', 'Quarter', 'Monthmax_vehicles', 'Monthmi
 useless_cols4 = ['Quarter', 'day_of_weekmin_vehicles', 'Monthmin_vehicles', 'day_of_weekmedian_vehicles', 'Year', 'Quartermedian_vehicles', 'Quartermean_vehicles', 'Quartermin_vehicles', 'Quartermax_vehicles', 'day_of_year', 'Quarterstd_vehicles', 'Month', 'Monthmean_vehicles',
                  'Vehicles', 'Seconds', 'Junction']
 
-pickle_in = open("junction1_model.pkl", "rb")
-junc1 = pickle.load(pickle_in)
-pickle_in.close()
+with open("junction1_model.pkl", "rb") as junc1:
+    junc1 = pickle.load(junc1)
 
-pickle_in = open("junction2_model.pkl", "rb")
-junc2 = pickle.load(pickle_in)
-pickle_in.close()
+with open("junction2_model.pkl", "rb") as junc2:
+    junc2 = pickle.load(junc2)
 
-pickle_in = open("junction3_model.pkl", "rb")
-junc3 = pickle.load(pickle_in)
-pickle_in.close()
 
-pickle_in = open("junction4_model.pkl", "rb")
-junc4 = pickle.load(pickle_in)
-pickle_in.close()
+with open("junction3_model.pkl", "rb") as junc3:
+    junc3 = pickle.load(junc3)
+
+with open("junction4_model.pkl", "rb") as junc4:
+    junc4 = pickle.load(junc4)
 
 # @app.route('/')
 
@@ -96,7 +96,7 @@ def predict_traffic(junction, DateTime):
         return df1
     df = agg_functions(db)
     df = df.tail(a)
-    #df = df.drop(useless_cols, axis=1).reset_index(drop=True)
+    # df = df.drop(useless_cols, axis=1).reset_index(drop=True)
 
     def to_ceil(array):
         ceiled = []
@@ -154,7 +154,7 @@ def predict_traffic(junction, DateTime):
 
 
 def main():
-    #st.title("Junction Traffic Predictor by Team Scipy")
+    # st.title("Junction Traffic Predictor by Team Scipy")
     html_temp = """
     <div style="background-color:tomato;padding:10px">
     <h2 style="color:white;text-align:center;font-family:'Caveat',cursive;font-weight: 400;max-width: 800px; width: 85%; margin: 0 auto;">Junction Traffic Predictor</h2>
@@ -174,7 +174,6 @@ def main():
         'Choose Junction:', min_value=1, max_value=4, value=1, step=1, format='%d')
 
     prediction = predict_traffic(junction, DateTime)
-
     result = ""
     if st.button("Predict"):
         result = prediction
@@ -248,7 +247,7 @@ def main():
         datestr = date2.strftime("%Y-%m-%d")
         timestr = time2.strftime("%H:%M:%S")
         DateTime1 = datestr + ' ' + timestr
-        #DateTime1 = pd.to_datetime(DateTime)
+        # DateTime1 = pd.to_datetime(DateTime)
         st.write('Real Time Forecasts')
         junction = st.number_input(
             'Choose Junction:', min_value=1, max_value=4, value=1, step=1, format='%d', key='ksu2@uNnyw1*2')
